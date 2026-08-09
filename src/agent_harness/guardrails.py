@@ -33,4 +33,11 @@ class Guardrail:
             target = (self.workspace / str(action.arguments.get("path", ""))).resolve()
             if self.workspace not in target.parents and target != self.workspace:
                 return ToolResult(False, "", "path escapes workspace")
+            filename = target.name.lower()
+            if action.name == "read_file" and (
+                filename == ".env"
+                or filename.startswith(".env.")
+                or filename in {"credentials", "secrets"}
+            ):
+                return ToolResult(False, "", "blocked sensitive file")
         return ToolResult(True, "allowed")
