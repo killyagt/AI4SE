@@ -68,3 +68,20 @@ def test_path_escape_is_rejected(tmp_path: Path):
     result = Guardrail(tmp_path).check(Action("tool", "read_file", {"path": "../outside.txt"}))
     assert not result.ok
     assert "escapes workspace" in result.error
+
+
+def test_guardrail_blocks_sensitive_env_file(tmp_path: Path):
+    result = Guardrail(tmp_path).check(Action("tool", "read_file", {"path": ".env"}))
+    assert not result.ok
+    assert "sensitive" in result.error
+
+
+def test_guardrail_blocks_nested_sensitive_file(tmp_path: Path):
+    result = Guardrail(tmp_path).check(Action("tool", "read_file", {"path": "config/.env.production"}))
+    assert not result.ok
+    assert "sensitive" in result.error
+
+
+def test_guardrail_allows_ordinary_config_file(tmp_path: Path):
+    result = Guardrail(tmp_path).check(Action("tool", "read_file", {"path": "config.json"}))
+    assert result.ok
