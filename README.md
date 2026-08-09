@@ -28,6 +28,7 @@ python -m pip install dist/safe_coding_agent_harness-0.1.0-py3-none-any.whl
 ## 安全边界
 
 - 默认工作区边界阻止文件工具访问工作区之外的路径。
+- `read_file` 默认拒绝读取 `.env`、`.env.*`、`credentials` 和 `secrets` 等敏感文件。
 - `rm`、`del`、`format`、关机、重启等危险命令由代码护栏拦截。
 - mock LLM 演示不访问网络，也不需要 API key。
 - 真实供应商适配器必须从环境或操作系统凭据管理器读取 key，不得写入源码、日志或 Git。
