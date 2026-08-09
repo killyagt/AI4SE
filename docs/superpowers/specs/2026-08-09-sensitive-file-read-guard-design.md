@@ -1,25 +1,25 @@
-# Sensitive File Read Guard Design
+# 敏感文件读取保护设计
 
-## Goal
+## 目标
 
-Prevent the coding agent from reading common local credential files through the `read_file` tool.
+防止 Coding Agent 通过 `read_file` 工具读取常见的本地凭据文件。
 
-## Scope
+## 范围
 
-- Restrict `read_file` only; ordinary file writing and command checks keep their current behavior.
-- Block files named `.env`, files whose names start with `.env.`, and files named `credentials` or `secrets`, case-insensitively.
-- Apply the rule after resolving the path, so nested sensitive files are also covered.
-- Return a clear guardrail error without opening the file.
-- Keep ordinary files such as `config.json` readable.
+- 只限制 `read_file`；普通文件写入和命令检查保持现有行为。
+- 屏蔽文件名为 `.env`、以 `.env.` 开头的文件，以及文件名为 `credentials` 或 `secrets` 的文件，不区分大小写。
+- 在路径解析后执行规则，因此嵌套目录中的敏感文件也会被保护。
+- 不打开文件，直接返回清楚的安全拦截错误。
+- 普通文件（例如 `config.json`）仍然可以读取。
 
-## Test-first behavior
+## 测试优先的行为
 
-1. A request to read `.env` is rejected.
-2. A request to read a nested `config/.env.production` is rejected.
-3. A request to read `config.json` remains allowed.
+1. 请求读取 `.env` 时被拒绝。
+2. 请求读取嵌套路径 `config/.env.production` 时被拒绝。
+3. 请求读取 `config.json` 时仍然允许。
 
-The existing path-boundary and dangerous-command tests must continue to pass.
+现有的路径边界测试和危险命令测试也必须继续通过。
 
-## Non-goals
+## 不在本次范围内的内容
 
-This change does not scan arbitrary file contents for secrets, redact values, or implement an approval UI. Those would require broader policy decisions.
+本次修改不扫描任意文件内容中的秘密信息，不对敏感值自动打码，也不实现用户确认界面。这些功能需要更大范围的策略设计。
