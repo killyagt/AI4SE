@@ -1,0 +1,7 @@
+stages: [test]
+unit-test:
+  stage: test
+  image: python:3.11
+  script:
+    - pip install -e ".[dev]"
+    - pytest
