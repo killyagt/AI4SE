@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .feedback import FeedbackValidator
+from .config import HarnessConfig
 from .guardrails import Guardrail
 from .llm import LLMClient
 from .memory import Memory
@@ -11,17 +12,21 @@ from .tools import ToolRegistry
 
 
 class AgentLoop:
-    def __init__(self, llm: LLMClient, workspace: Path, memory: Memory | None = None, max_steps: int = 8, approval=None):
+    def __init__(self, llm: LLMClient, workspace: Path, memory: Memory | None = None, max_steps: int = 8, approval=None, config: HarnessConfig | None = None):
+        config = config or HarnessConfig(max_steps=max_steps)
         self.llm = llm
         self.tools = ToolRegistry(workspace)
-        self.guardrail = Guardrail(workspace, approval=approval)
+        self.guardrail = Guardrail(workspace, approval=approval, blocked_commands=config.blocked_commands)
         self.feedback = FeedbackValidator()
         self.memory = memory or Memory()
-        self.max_steps = max_steps
+        self.max_steps = config.max_steps
 
     def run(self, goal: str) -> RunResult:
         messages = [{"role": "system", "content": "Return one JSON action. Use tools only when needed."}, {"role": "user", "content": goal}]
         steps = []
+        prior = self.memory.search(goal)
+        if prior:
+            messages.append({"role": "system", "content": "Relevant prior memory: " + str(prior)})
         for index in range(1, self.max_steps + 1):
             action = self.llm.complete(messages, self.tools.schemas())
             if action.kind in {"final", "stop"}:

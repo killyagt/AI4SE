@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from agent_harness.guardrails import Guardrail
+from agent_harness.config import HarnessConfig
 from agent_harness.llm import ScriptedLLM
 from agent_harness.loop import AgentLoop
 from agent_harness.models import Action
@@ -39,3 +40,11 @@ def test_blocked_action_does_not_execute(tmp_path: Path):
     result = AgentLoop(llm, tmp_path).run("do not delete files")
     assert result.status == "completed"
     assert result.steps[0]["status"] == "blocked"
+
+
+def test_configuration_is_loaded_from_json(tmp_path: Path):
+    path = tmp_path / "harness.json"
+    path.write_text('{"max_steps": 3, "blocked_commands": ["custom-danger"]}', encoding="utf-8")
+    config = HarnessConfig.from_json(path)
+    assert config.max_steps == 3
+    assert "custom-danger" in config.blocked_commands
