@@ -9,8 +9,8 @@ from .models import Action
 
 
 def demo() -> int:
-    # Keep the demo workspace beside the source tree so it is easy to remove.
-    root = Path.cwd().parent / ".agent-harness-demo"
+    # Keep the demo workspace in the user's current working directory.
+    root = Path.cwd() / ".agent-harness-demo"
     llm = ScriptedLLM([
         Action("tool", "run_command", {"command": "rm -rf demo.txt"}),
         Action("tool", "write_file", {"path": "demo.txt", "content": "feedback loop recovered"}),
