@@ -1,0 +1,8 @@
+{
+  // 提交到 selearning 前复制为 submission.jsonc，并修改所有示例值
+  "id": "你的学号",
+  "name": "你的姓名",
+  "repo_url": "你的 NJU Git 或 GitHub 仓库链接",
+  "is_deployed": false,
+  "deploy_release_url": "你的 Release 链接"
+}
