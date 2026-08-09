@@ -2,6 +2,7 @@ from pathlib import Path
 
 from agent_harness.guardrails import Guardrail
 from agent_harness.config import HarnessConfig
+from agent_harness.llm import action_from_json
 from agent_harness.llm import ScriptedLLM
 from agent_harness.loop import AgentLoop
 from agent_harness.models import Action
@@ -48,3 +49,22 @@ def test_configuration_is_loaded_from_json(tmp_path: Path):
     config = HarnessConfig.from_json(path)
     assert config.max_steps == 3
     assert "custom-danger" in config.blocked_commands
+
+
+def test_partial_configuration_preserves_default_dangerous_commands(tmp_path: Path):
+    path = tmp_path / "harness.json"
+    path.write_text('{"max_steps": 3}', encoding="utf-8")
+    config = HarnessConfig.from_json(path)
+    assert "rm" in config.blocked_commands
+
+
+def test_action_json_parser_returns_tool_action():
+    action = action_from_json('{"kind":"tool","name":"read_file","arguments":{"path":"x"}}')
+    assert action.name == "read_file"
+    assert action.arguments == {"path": "x"}
+
+
+def test_path_escape_is_rejected(tmp_path: Path):
+    result = Guardrail(tmp_path).check(Action("tool", "read_file", {"path": "../outside.txt"}))
+    assert not result.ok
+    assert "escapes workspace" in result.error

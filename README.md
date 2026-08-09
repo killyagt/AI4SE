@@ -43,9 +43,9 @@ demo/               机制演示
 
 ## 已知限制
 
-当前版本是单进程、单 agent、CLI 原型；命令执行依赖宿主操作系统，真实 LLM 供应商适配和完整 OS sandbox 需要后续扩展。
+当前版本是单进程、单 agent、CLI 原型；命令执行使用参数列表而不是 shell 字符串，但仍依赖宿主操作系统，完整 OS sandbox 需要后续扩展。
 
-运行时规则也可以放在 JSON 配置中，例如 `{"max_steps": 3, "blocked_commands": ["custom-danger"]}`，再通过 `HarnessConfig.from_json()` 加载。
+运行时规则也可以放在 JSON 配置中，例如 `{"max_steps": 3, "blocked_commands": ["custom-danger"]}`，再通过 `agent-harness demo --config harness.json` 加载；省略 `blocked_commands` 时会保留默认危险命令集合。
 
 可选的真实 API key 管理：
 

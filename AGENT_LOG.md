@@ -7,5 +7,6 @@
 | 2026-08-09 | Security regression | TDD | RED：PowerShell 删除护栏测试输出 `F`；GREEN：全套测试输出 `.... [100%]` | 增加 `remove-item` / `clear-content` 拦截 |
 | 2026-08-09 | Configuration | TDD | RED：配置测试因缺少 `config` 模块失败；GREEN：全套测试输出 `..... [100%]` | 增加 JSON 配置和记忆读取 |
 | 2026-08-09 | Packaging | verification | wheel `safe_coding_agent_harness-0.1.0-py3-none-any.whl` 构建并安装，CLI demo 通过 | 临时构建副本仅用于验证沙箱权限 |
+| 2026-08-09 | Review fixes | code review + TDD | 修复 partial config 安全边界；补充 parser/path 测试；将命令执行改为 `shell=False`；接入 keyring 读取和 CLI config 参数 | 根据独立审查意见修复 Critical/Important |
 
 后续每次实现、测试、评审、人工修改和提交都要追加记录，不得凭空补写结果。

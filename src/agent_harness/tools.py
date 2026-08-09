@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import shlex
 from pathlib import Path
 from typing import Any, Callable
 
@@ -37,6 +38,12 @@ class ToolRegistry:
         return ToolResult(True, f"wrote {path}")
 
     def run_command(self, command: str, timeout: int = 20) -> ToolResult:
-        completed = subprocess.run(command, cwd=self.workspace, shell=True, capture_output=True, text=True, timeout=timeout)
+        try:
+            args = shlex.split(command)
+        except ValueError as exc:
+            return ToolResult(False, "", f"invalid command: {exc}")
+        if not args:
+            return ToolResult(False, "", "command cannot be empty")
+        completed = subprocess.run(args, cwd=self.workspace, shell=False, capture_output=True, text=True, timeout=timeout)
         output = (completed.stdout + completed.stderr).strip()
         return ToolResult(completed.returncode == 0, output, "" if completed.returncode == 0 else f"exit code {completed.returncode}")

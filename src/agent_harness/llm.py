@@ -46,7 +46,11 @@ class OpenAICompatibleLLM:
     def __init__(self, endpoint: str, model: str, api_key: str | None = None):
         self.endpoint = endpoint
         self.model = model
-        self.api_key = api_key or os.environ.get("AGENT_HARNESS_API_KEY")
+        if api_key is not None:
+            self.api_key = api_key
+        else:
+            from .credentials import get_api_key
+            self.api_key = os.environ.get("AGENT_HARNESS_API_KEY") or get_api_key("openai-compatible")
 
     def complete(self, messages: list[dict[str, str]], tools: list[dict[str, Any]]) -> Action:
         if not self.api_key:
