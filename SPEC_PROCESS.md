@@ -28,3 +28,5 @@
 冷启动结果为失败：`ModuleNotFoundError: No module named 'agent_harness'`，因为没有先安装项目或设置 `PYTHONPATH`。智能体没有查看其他文件，也没有自行修复。这个结果暴露出 PLAN 对测试前置条件写得不够清楚：CI 使用 `pip install -e ".[dev]"` 后再运行 pytest，而裸运行 pytest 不一定能导入 `src` 布局下的包。
 
 据此补充约定：从全新环境验证时，先运行 `python -m pip install -e ".[dev]"`，再运行 `pytest -q`；README 和 PLAN 均需明确这一前置步骤。冷启动没有被记录为成功实现，而是作为 SPEC/PLAN 清晰度的反例。
+
+随后在 `pyproject.toml` 的 pytest 配置中加入 `pythonpath = ["src"]`，使已经安装 pytest 的源码检出目录也可以直接运行 `pytest`。修订后在不设置 `PYTHONPATH` 的情况下重新运行，结果为 `11 passed`。
