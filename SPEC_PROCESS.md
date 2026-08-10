@@ -21,6 +21,10 @@
 - RED：`pytest -q tests/test_harness.py::test_guardrail_blocks_powershell_delete_command` 输出 `F`。
 - GREEN：加入 `remove-item` 和 `clear-content` 规则后，`pytest -q --basetemp D:\AI4SE\pytest-temp-green` 输出 `.... [100%]`。
 
-## 尚需补充的过程证据
+## 冷启动验证记录
 
-正式提交前请补充真实 brainstorming 对话节选、每轮提问和采纳/否决决策。2026-08-09 已发起一个无历史上下文的陌生 agent 冷启动检查，但该 agent 在环境中超时且没有返回报告，不能把它写成成功完成。提交前需要重新完成一次，并记录它仅阅读 SPEC + PLAN 后提出的具体问题和由此产生的修订。
+2026-08-11：陌生智能体只阅读 `SPEC.md` 和 `PLAN.md`，没有查看其他项目文件。由于 T1-T6 已标记完成，它选择执行 SPEC/PLAN 中明确的最小验收动作：在项目目录直接运行 `pytest`。
+
+冷启动结果为失败：`ModuleNotFoundError: No module named 'agent_harness'`，因为没有先安装项目或设置 `PYTHONPATH`。智能体没有查看其他文件，也没有自行修复。这个结果暴露出 PLAN 对测试前置条件写得不够清楚：CI 使用 `pip install -e ".[dev]"` 后再运行 pytest，而裸运行 pytest 不一定能导入 `src` 布局下的包。
+
+据此补充约定：从全新环境验证时，先运行 `python -m pip install -e ".[dev]"`，再运行 `pytest -q`；README 和 PLAN 均需明确这一前置步骤。冷启动没有被记录为成功实现，而是作为 SPEC/PLAN 清晰度的反例。
