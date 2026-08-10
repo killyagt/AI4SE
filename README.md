@@ -25,6 +25,8 @@ python -m pip install dist/safe_coding_agent_harness-0.1.0-py3-none-any.whl
 
 发布时将 `dist/` 中的 wheel 上传到 GitHub/NJU Git Release。CLI-only 项目使用 Release 链接作为发布入口，不需要 WebUI。
 
+当前 Release：[v0.1.0](https://github.com/killyagt/AI4SE/releases/tag/v0.1.0)。
+
 ## 安全边界
 
 - 默认工作区边界阻止文件工具访问工作区之外的路径。
