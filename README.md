@@ -1,10 +1,6 @@
 # Safe Coding Agent Harness
 
-一个面向软件开发任务的、可测试的 Coding Agent Harness。它把 LLM 的决策放在确定性的工程控制层之后：工具分发、危险动作护栏、客观反馈、记忆和停机条件都由本项目代码实现。
-
-## 为什么有人会用
-
-普通 LLM 只能提出下一步建议，不能安全、稳定地读写项目和运行测试。本工具提供一个小而清晰的运行时，让 coding agent 可以执行工具、接收测试反馈，并在危险动作处暂停。它支持 mock LLM 离线运行，便于测试和审计。
+这是一个面向编程任务的命令行 Coding Agent Harness。它提供文件读写、命令执行、反馈和记忆，并在工具执行前检查危险操作。
 
 ## 安装与运行
 
@@ -15,6 +11,12 @@ agent-harness demo
 pytest
 ```
 
+也可以直接运行：
+
+```bash
+python -m agent_harness.cli demo
+```
+
 ## 分发
 
 ```bash
@@ -23,38 +25,26 @@ python -m build
 python -m pip install dist/safe_coding_agent_harness-0.1.0-py3-none-any.whl
 ```
 
-发布时将 `dist/` 中的 wheel 上传到 GitHub/NJU Git Release。CLI-only 项目使用 Release 链接作为发布入口，不需要 WebUI。
+当前 Release：<https://github.com/killyagt/AI4SE/releases/tag/v0.1.0>
 
-当前 Release：[v0.1.0](https://github.com/killyagt/AI4SE/releases/tag/v0.1.0)。
+本项目是 CLI-only 原型，不提供 WebUI。真实 API key 应通过环境变量或操作系统凭据管理器配置，不能写入源码或 Git。
 
 ## 安全边界
 
-- 默认工作区边界阻止文件工具访问工作区之外的路径。
-- `read_file` 默认拒绝读取 `.env`、`.env.*`、`credentials` 和 `secrets` 等敏感文件。
-- `rm`、`del`、`format`、关机、重启等危险命令由代码护栏拦截。
-- mock LLM 演示不访问网络，也不需要 API key。
-- 真实供应商适配器必须从环境或操作系统凭据管理器读取 key，不得写入源码、日志或 Git。
-- 运行命令仍应在隔离的测试仓库中使用；本项目不是完整的操作系统级 sandbox。
+- 文件工具不能访问工作区之外的路径。
+- `read_file` 默认拒绝 `.env`、`.env.*`、`credentials` 和 `secrets`。
+- `rm`、`del`、`format`、关机、重启等危险命令会被拦截。
+- mock LLM 演示不需要网络和 API key。
+- 当前版本不是完整的操作系统级 sandbox，命令执行仍依赖宿主系统。
 
 ## 目录结构
 
 ```text
-src/agent_harness/  harness 内核
-tests/              mock 驱动的确定性测试
+src/agent_harness/  核心代码
+tests/              自动化测试
 demo/               机制演示
 ```
 
 ## 已知限制
 
-当前版本是单进程、单 agent、CLI 原型；命令执行使用参数列表而不是 shell 字符串，但仍依赖宿主操作系统，完整 OS sandbox 需要后续扩展。
-
-运行时规则也可以放在 JSON 配置中，例如 `{"max_steps": 3, "blocked_commands": ["custom-danger"]}`，再通过 `agent-harness demo --config harness.json` 加载；省略 `blocked_commands` 时会保留默认危险命令集合。
-
-可选的真实 API key 管理：
-
-```bash
-python -m pip install ".[credentials]"
-python -c "from agent_harness.credentials import set_api_key; set_api_key('provider')"
-```
-
-key 写入操作系统凭据管理器，不会在终端回显；环境变量仅作为兼容性兜底，并明确存在进程可见风险。
+当前版本是单进程、单 agent、CLI 原型，使用 mock LLM 进行离线测试。真实 LLM、交互式人工审批和完整 sandbox 仍需后续实现。
