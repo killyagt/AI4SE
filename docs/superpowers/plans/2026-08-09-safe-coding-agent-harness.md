@@ -68,7 +68,7 @@
 - [x] Add a deterministic demo sequence: dangerous action, safe correction, final result.
 - [x] Run the demo and verify the exact three-stage trace.
 - [x] Add wheel metadata, install commands, security boundaries, and known limitations.
-- [ ] Build a wheel and install it in a clean environment.
+- [x] Build a wheel and install it in a clean environment.
 
 ### Task 5: Complete process evidence and repository validation
 
@@ -79,8 +79,8 @@
 - Modify: `AGENT_LOG.md`
 - Create: `REFLECTION_TEMPLATE.md`
 
-- [ ] Record the confirmed design, actual test commands, failures, fixes, and commits without inventing conversations.
-- [ ] Run the full test command from the final tree with a writable temporary directory.
-- [ ] Run the mechanism demo from the final tree.
-- [ ] Review every required deliverable against the course checklist.
-- [ ] Initialize Git, create multiple focused commits, and record commit hashes.
+- [x] Record the confirmed design, actual test commands, failures, fixes, and commits without inventing conversations.
+- [x] Run the full test command from the final tree with a writable temporary directory.
+- [x] Run the mechanism demo from the final tree.
+- [x] Review every required deliverable against the course checklist.
+- [x] Initialize Git, create multiple focused commits, and record commit hashes.
